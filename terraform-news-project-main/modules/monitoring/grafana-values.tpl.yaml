@@ -1,0 +1,43 @@
+
+# CloudWatch Datasource 정의 추가
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: CloudWatch
+        uid: CloudWatch
+        type: cloudwatch
+        access: proxy
+        isDefault: true
+        jsonData:
+          defaultRegion: ap-northeast-2
+      - name: Prometheus
+        uid: prometheus
+        type: prometheus
+        access: proxy
+        url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+        isDefault: false
+
+# 대시보드 자동 로드 및 패널 정의
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: "default"
+        orgId: 1
+        folder: ""
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 10
+        options:
+          path: /var/lib/grafana/dashboards/default
+
+dashboards:
+  default:
+    news-subscribe-dashboard:
+      json: |
+        ${cloudwatch_json}
+
+    kubelet-dashboard:
+      json: |
+        ${kubelet_json}
